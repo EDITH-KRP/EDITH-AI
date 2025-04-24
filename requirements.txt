@@ -1,0 +1,10 @@
+SpeechRecognition
+pyttsx3
+pyaudio
+ollama
+requests
+pywin32
+psutil
+pyautogui
+pillow
+pytesseract

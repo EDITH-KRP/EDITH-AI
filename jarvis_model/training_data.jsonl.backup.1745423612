@@ -1,0 +1,98 @@
+{"role": "user", "content": "Open Chrome"}
+{"role": "assistant", "content": "Opening Chrome."}
+{"role": "user", "content": "Open Spotify"}
+{"role": "assistant", "content": "Opening Spotify."}
+{"role": "user", "content": "Play Shape of You by Ed Sheeran"}
+{"role": "assistant", "content": "Playing Shape of You by Ed Sheeran on Spotify."}
+{"role": "user", "content": "Pause the music"}
+{"role": "assistant", "content": "Pausing music playback."}
+{"role": "user", "content": "Search for Python tutorials"}
+{"role": "assistant", "content": "Searching for Python tutorials on Google."}
+{"role": "user", "content": "Open YouTube"}
+{"role": "assistant", "content": "Opening YouTube."}
+{"role": "user", "content": "Close this window"}
+{"role": "assistant", "content": "Closing the current window."}
+{"role": "user", "content": "Take a screenshot"}
+{"role": "assistant", "content": "Taking a screenshot."}
+{"role": "user", "content": "What time is it?"}
+{"role": "assistant", "content": "The current time is [current time]."}
+{"role": "user", "content": "Send message to John on WhatsApp saying I'll be late"}
+{"role": "assistant", "content": "Sending message to John on WhatsApp: 'I'll be late'"}
+{"role": "user", "content": "Send SMS to Mom saying I'll call later"}
+{"role": "assistant", "content": "Sending SMS to Mom: 'I'll call later'"}
+{"role": "user", "content": "Send email to boss@example.com subject Meeting report body Here's the report"}
+{"role": "assistant", "content": "Composing email to boss@example.com with subject 'Meeting report' and body 'Here's the report'"}
+{"role": "user", "content": "Call Sarah on WhatsApp"}
+{"role": "assistant", "content": "Calling Sarah on WhatsApp."}
+{"role": "user", "content": "Video call Mike on Teams"}
+{"role": "assistant", "content": "Starting a video call with Mike on Microsoft Teams."}
+{"role": "user", "content": "Add contact named John Smith with phone 555-1234 email john@example.com"}
+{"role": "assistant", "content": "Added new contact: John Smith with phone 555-1234 and email john@example.com"}
+{"role": "user", "content": "Find contact named Sarah"}
+{"role": "assistant", "content": "Finding contact information for Sarah..."}
+{"role": "user", "content": "List contacts"}
+{"role": "assistant", "content": "Here are your contacts: [list of contacts]"}
+{"role": "user", "content": "Add event called Team Meeting on tomorrow at 3pm"}
+{"role": "assistant", "content": "Added event: Team Meeting on tomorrow at 3:00 PM"}
+{"role": "user", "content": "What's on today?"}
+{"role": "assistant", "content": "Here are your events for today: [list of events]"}
+{"role": "user", "content": "Show my upcoming events"}
+{"role": "assistant", "content": "Here are your upcoming events: [list of events]"}
+{"role": "user", "content": "Show events for next Monday"}
+{"role": "assistant", "content": "Here are your events for next Monday: [list of events]"}
+{"role": "user", "content": "Delete event Team Meeting on tomorrow"}
+{"role": "assistant", "content": "Deleted event: Team Meeting on tomorrow"}
+{"role": "user", "content": "Search for vacation photos in Google Photos"}
+{"role": "assistant", "content": "Searching for 'vacation photos' in Google Photos."}
+{"role": "user", "content": "Search for budget spreadsheet in Google Drive"}
+{"role": "assistant", "content": "Searching for 'budget spreadsheet' in Google Drive."}
+{"role": "user", "content": "Search for Python tutorials in YouTube"}
+{"role": "assistant", "content": "Searching for 'Python tutorials' on YouTube."}
+{"role": "user", "content": "Search for Taylor Swift in Spotify"}
+{"role": "assistant", "content": "Searching for 'Taylor Swift' in Spotify."}
+{"role": "user", "content": "Open presentation in PowerPoint"}
+{"role": "assistant", "content": "Opening presentation in Microsoft PowerPoint."}
+{"role": "user", "content": "Create new document in Word"}
+{"role": "assistant", "content": "Creating a new document in Microsoft Word."}
+{"role": "user", "content": "Shutdown computer"}
+{"role": "assistant", "content": "Shutting down the computer in 60 seconds. Say 'cancel shutdown' to abort."}
+{"role": "user", "content": "Cancel shutdown"}
+{"role": "assistant", "content": "Shutdown aborted."}
+{"role": "user", "content": "Restart computer"}
+{"role": "assistant", "content": "Restarting the computer in 60 seconds. Say 'cancel restart' to abort."}
+{"role": "user", "content": "Sleep computer"}
+{"role": "assistant", "content": "Putting the computer to sleep."}
+{"role": "user", "content": "Type Hello, how are you?"}
+{"role": "assistant", "content": "Typing: 'Hello, how are you?'"}
+{"role": "user", "content": "Press Enter"}
+{"role": "assistant", "content": "Pressing Enter key."}
+{"role": "user", "content": "Copy"}
+{"role": "assistant", "content": "Copying selected content."}
+{"role": "user", "content": "Paste"}
+{"role": "assistant", "content": "Pasting content."}
+{"role": "user", "content": "Select all"}
+{"role": "assistant", "content": "Selecting all content."}
+{"role": "user", "content": "Undo"}
+{"role": "assistant", "content": "Undoing last action."}
+{"role": "user", "content": "Redo"}
+{"role": "assistant", "content": "Redoing last action."}
+{"role": "user", "content": "What can you do?"}
+{"role": "assistant", "content": "I can help you with various tasks on your laptop, including:\n\n1. Opening and controlling applications\n2. Sending messages and making calls\n3. Managing your calendar and contacts\n4. Playing and controlling music\n5. Browsing the web and searching for information\n6. Controlling your system (shutdown, restart, etc.)\n7. Typing and keyboard control\n8. File management\n\nJust tell me what you'd like me to do!"}
+{"role": "user", "content": "How do I send a message?"}
+{"role": "assistant", "content": "You can send messages using commands like:\n\n- \"Send message to [name] on WhatsApp saying [your message]\"\n- \"Send SMS to [name] saying [your message]\"\n- \"Send email to [email address] subject [subject] body [message]\"\n\nFor example: \"Send message to John on WhatsApp saying I'll be there in 10 minutes\""}
+{"role": "user", "content": "How do I add an event to my calendar?"}
+{"role": "assistant", "content": "Opening chrome."}
+{"role": "user", "content": "add contact named test user with phone 555-9999 email test@example.com"}
+{"role": "assistant", "content": "Added new contact: test user with phone"}
+{"role": "user", "content": "add event called test event on tomorrow at 15:00"}
+{"role": "assistant", "content": "Could not parse date: tomorrow at 15:00. Please use a format like YYYY-MM-DD or 'today'."}
+{"role": "user", "content": "show my upcoming events"}
+{"role": "assistant", "content": "Upcoming events for the next 7 days:\n\nThursday, April 24, 2025:\n- Team Meeting at 14:00 at Conference Room A\n\nMonday, April 28, 2025:\n- Doctor Appointment at 10:30 at Medical Center\n"}
+{"role": "user", "content": "Hello JARVIS"}
+{"role": "assistant", "content": "Hello! How can I help you today?"}
+{"role": "user", "content": "what can you do"}
+{"role": "assistant", "content": "I'm your personal assistant. I can open apps, search for information, tell you the time, and much more."}
+{"role": "user", "content": "what's the time now"}
+{"role": "assistant", "content": "The time function is currently unavailable."}
+{"role": "user", "content": "hello"}
+{"role": "assistant", "content": "Hi there! What can I do for you?"}

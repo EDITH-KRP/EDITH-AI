@@ -1,0 +1,18 @@
+[
+    {
+        "title": "Team Meeting",
+        "date": "2025-04-24",
+        "id": 1,
+        "time": "14:00",
+        "description": "Weekly team sync",
+        "location": "Conference Room A"
+    },
+    {
+        "title": "Doctor Appointment",
+        "date": "2025-04-28",
+        "id": 2,
+        "time": "10:30",
+        "description": "Annual checkup",
+        "location": "Medical Center"
+    }
+]
