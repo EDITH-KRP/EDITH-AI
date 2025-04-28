@@ -81,7 +81,6 @@
 {"role": "user", "content": "How do I send a message?"}
 {"role": "assistant", "content": "You can send messages using commands like:\n\n- \"Send message to [name] on WhatsApp saying [your message]\"\n- \"Send SMS to [name] saying [your message]\"\n- \"Send email to [email address] subject [subject] body [message]\"\n\nFor example: \"Send message to John on WhatsApp saying I'll be there in 10 minutes\""}
 {"role": "user", "content": "How do I add an event to my calendar?"}
-{"role": "assistant", "content": "You can add events to your calendar using commands like:\n\n- \"Add event called [event name] on [date] at [time]\"\n- \"Add event [event name] on [date] at [time] with description [description] at location [location]\"\n\nFor example: \"Add event called Team Meeting on tomorrow at 3pm\" or \"Add event Doctor Appointment on next Monday at 10:30am at Medical Center\""}{"role": "user", "content": "open chrome"}
 {"role": "assistant", "content": "Opening chrome."}
 {"role": "user", "content": "add contact named test user with phone 555-9999 email test@example.com"}
 {"role": "assistant", "content": "Added new contact: test user with phone"}
