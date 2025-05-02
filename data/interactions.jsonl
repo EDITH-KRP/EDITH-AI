@@ -30,3 +30,4 @@
 {"timestamp": "2025-04-24T13:26:03.921822", "user_query": "Sorry, I didn\u2019t catch that.", "jarvis_response": "I'm here to help with tasks like opening apps, searching the web, and controlling your computer. What would you like me to do?", "was_successful": false}
 {"timestamp": "2025-04-27T18:30:30.647885", "user_query": "hello", "jarvis_response": "Greetings! How may I assist you?", "was_successful": true}
 {"timestamp": "2025-04-27T18:30:40.165365", "user_query": "Sorry, I didn\u2019t catch that.", "jarvis_response": "I'm here to help with tasks like opening apps, searching the web, and controlling your computer. What would you like me to do?", "was_successful": false}
+{"timestamp": "2025-04-28T23:27:45.105165", "user_query": "what can you do", "jarvis_response": "I'm your personal assistant. I can open apps, search for information, tell you the time, and much more.", "was_successful": true}
