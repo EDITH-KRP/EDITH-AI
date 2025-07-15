@@ -15,36 +15,46 @@ const useAuth = () => {
   return context;
 };
 
-// Voice recognition hook
+// Advanced Voice Recognition Hook with EDITH-AI integration
 const useVoiceRecognition = () => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [language, setLanguage] = useState('en-US');
+  const [voiceSupported, setVoiceSupported] = useState(false);
   const recognitionRef = useRef(null);
 
-  useEffect(() => {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      alert('Speech recognition not supported in this browser');
-      return;
-    }
+  // Enhanced language configuration with regional support
+  const languageConfig = {
+    'en-US': { name: 'English', code: 'en-IN', apiCode: 'en' },
+    'hi-IN': { name: 'हिंदी', code: 'hi-IN', apiCode: 'hi' },
+    'kn-IN': { name: 'ಕನ್ನಡ', code: 'kn-IN', apiCode: 'kn' },
+    'ta-IN': { name: 'தமிழ்', code: 'ta-IN', apiCode: 'ta' },
+    'te-IN': { name: 'తెలుగు', code: 'te-IN', apiCode: 'te' }
+  };
 
+  useEffect(() => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      setVoiceSupported(true);
+      initializeSpeechRecognition();
+    } else {
+      setVoiceSupported(false);
+      console.error('Speech recognition not supported in this browser');
+    }
+  }, [language]);
+
+  const initializeSpeechRecognition = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
     
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = language;
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = languageConfig[language]?.code || 'en-US';
+    recognition.maxAlternatives = 1;
 
     recognition.onresult = (event) => {
-      let finalTranscript = '';
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        if (event.results[i].isFinal) {
-          finalTranscript += event.results[i][0].transcript;
-        }
-      }
-      if (finalTranscript) {
-        setTranscript(finalTranscript);
-      }
+      const finalTranscript = event.results[0][0].transcript;
+      setTranscript(finalTranscript);
+      console.log('Voice input:', finalTranscript);
     };
 
     recognition.onerror = (event) => {
@@ -56,22 +66,38 @@ const useVoiceRecognition = () => {
       setIsListening(false);
     };
 
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+
     recognitionRef.current = recognition;
-  }, [language]);
+  };
 
   const startListening = () => {
-    if (recognitionRef.current) {
+    if (recognitionRef.current && voiceSupported) {
       setTranscript('');
-      setIsListening(true);
-      recognitionRef.current.start();
+      try {
+        recognitionRef.current.start();
+      } catch (error) {
+        console.error('Error starting recognition:', error);
+        setIsListening(false);
+      }
     }
   };
 
   const stopListening = () => {
     if (recognitionRef.current) {
-      recognitionRef.current.stop();
+      try {
+        recognitionRef.current.stop();
+      } catch (error) {
+        console.error('Error stopping recognition:', error);
+      }
       setIsListening(false);
     }
+  };
+
+  const getLanguageCode = () => {
+    return languageConfig[language]?.apiCode || 'en';
   };
 
   return {
@@ -79,7 +105,10 @@ const useVoiceRecognition = () => {
     transcript,
     startListening,
     stopListening,
-    setLanguage
+    setLanguage,
+    voiceSupported,
+    getLanguageCode,
+    languageConfig
   };
 };
 
