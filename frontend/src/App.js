@@ -112,23 +112,52 @@ const useVoiceRecognition = () => {
   };
 };
 
-// Text-to-speech hook
+// Enhanced Text-to-speech hook with multilingual support
 const useTextToSpeech = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const synthRef = useRef(null);
+
+  useEffect(() => {
+    if ('speechSynthesis' in window) {
+      synthRef.current = window.speechSynthesis;
+    }
+  }, []);
 
   const speak = (text, lang = 'en-US') => {
-    if ('speechSynthesis' in window) {
+    if ('speechSynthesis' in window && synthRef.current) {
+      // Cancel any ongoing speech
+      synthRef.current.cancel();
+      
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = lang;
+      
+      // Set language based on input
+      const langMapping = {
+        'en': 'en-US',
+        'hi': 'hi-IN',
+        'kn': 'kn-IN',
+        'ta': 'ta-IN',
+        'te': 'te-IN'
+      };
+      
+      utterance.lang = langMapping[lang] || lang;
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+      
       utterance.onstart = () => setIsSpeaking(true);
       utterance.onend = () => setIsSpeaking(false);
-      speechSynthesis.speak(utterance);
+      utterance.onerror = (event) => {
+        console.error('Speech synthesis error:', event.error);
+        setIsSpeaking(false);
+      };
+      
+      synthRef.current.speak(utterance);
     }
   };
 
   const stop = () => {
-    if ('speechSynthesis' in window) {
-      speechSynthesis.cancel();
+    if ('speechSynthesis' in window && synthRef.current) {
+      synthRef.current.cancel();
       setIsSpeaking(false);
     }
   };
