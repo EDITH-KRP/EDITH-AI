@@ -240,6 +240,46 @@
   outline-offset: 2px;
 }
 
+.voice-demo-button {
+  background: rgba(255, 255, 255, 0.8);
+  color: #667eea;
+  border: 2px solid #667eea;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.voice-demo-button:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.voice-tip {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 5px;
+}
+
+.voice-error {
+  background: #fed7d7;
+  border: 1px solid #feb2b2;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  color: #c53030;
+  text-align: center;
+}
+
+.voice-error p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+
 /* Voice Accessibility */
 @media (prefers-reduced-motion: reduce) {
   .voice-button.pulse,
