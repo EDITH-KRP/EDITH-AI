@@ -205,8 +205,9 @@ def parse_voice_command(command: str, language: str = "en"):
                 product_name = match.group(2).strip()
                 price = float(match.group(3))
                 
-                # Clean product name
-                product_name = re.sub(r'\b(?:add|at|rupees?|kg)\b', '', product_name).strip()
+                # Clean product name - remove common words and extra spaces
+                product_name = re.sub(r'\b(?:add|at|rupees?|kg|కిలో|किलो|ಕಿಲೋ|கிலோ|রূপা|ரூபா|రూపాయ|ರೂಪಾಯಿ|रुपये)\b', '', product_name).strip()
+                product_name = ' '.join(product_name.split())  # Remove extra spaces
                 
                 return {
                     "action": "add",
