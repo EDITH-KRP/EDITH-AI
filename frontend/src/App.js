@@ -139,17 +139,51 @@ const App = () => {
       return;
     }
 
-    if (recognitionRef.current && !isListening) {
-      setTranscript('');
-      setError('');
-      setResponse('');
+    if (isListening) {
+      return; // Already listening
+    }
+
+    setTranscript('');
+    setError('');
+    setResponse('');
+    
+    try {
+      // Create new recognition instance each time
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.lang = languageConfig[language].code;
       
-      try {
-        recognitionRef.current.start();
-      } catch (err) {
-        setError('Failed to start voice recognition');
-        console.error('Voice recognition error:', err);
-      }
+      recognitionRef.current.onstart = () => {
+        setIsListening(true);
+        setError('');
+        console.log('Voice recognition started');
+      };
+      
+      recognitionRef.current.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        console.log('Voice transcript:', transcript);
+        setTranscript(transcript);
+        processVoiceCommand(transcript);
+      };
+      
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+        console.log('Voice recognition ended');
+      };
+      
+      recognitionRef.current.onerror = (event) => {
+        setError('Voice recognition error: ' + event.error);
+        setIsListening(false);
+        console.error('Voice recognition error:', event.error);
+      };
+
+      recognitionRef.current.start();
+    } catch (err) {
+      setError('Failed to start voice recognition: ' + err.message);
+      setIsListening(false);
+      console.error('Voice recognition error:', err);
     }
   };
 
