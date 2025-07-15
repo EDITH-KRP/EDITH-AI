@@ -39,36 +39,6 @@ const App = () => {
 
   const initializeSpeechRecognition = () => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = false;
-      recognitionRef.current.interimResults = false;
-      recognitionRef.current.lang = languageConfig[language].code;
-      
-      recognitionRef.current.onstart = () => {
-        setIsListening(true);
-        setError('');
-        console.log('Voice recognition started');
-      };
-      
-      recognitionRef.current.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        console.log('Voice transcript:', transcript);
-        setTranscript(transcript);
-        processVoiceCommand(transcript);
-      };
-      
-      recognitionRef.current.onend = () => {
-        setIsListening(false);
-        console.log('Voice recognition ended');
-      };
-      
-      recognitionRef.current.onerror = (event) => {
-        setError('Voice recognition error: ' + event.error);
-        setIsListening(false);
-        console.error('Voice recognition error:', event.error);
-      };
-
       setVoiceSupported(true);
     } else {
       setVoiceSupported(false);
