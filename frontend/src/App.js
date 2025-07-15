@@ -188,9 +188,15 @@ const App = () => {
   };
 
   const stopListening = () => {
-    if (recognitionRef.current && isListening) {
-      recognitionRef.current.stop();
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+        recognitionRef.current = null;
+      } catch (err) {
+        console.error('Error stopping recognition:', err);
+      }
     }
+    setIsListening(false);
   };
 
   const formatPrice = (price) => {
