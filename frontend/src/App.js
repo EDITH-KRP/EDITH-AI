@@ -1,9 +1,87 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './App.css';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
+
+// Language codes for speech recognition
+const SPEECH_LANGUAGE_CODES = {
+  english: 'en-IN',
+  hindi: 'hi-IN',
+  kannada: 'kn-IN',
+  tamil: 'ta-IN',
+  telugu: 'te-IN',
+  malayalam: 'ml-IN'
+};
+
+// Voice prompts for different languages
+const VOICE_PROMPTS = {
+  english: "Say product name, quantity, and price. For example: 'Fresh tomatoes, 1 kg, 50 rupees'",
+  hindi: "उत्पाद का नाम, मात्रा और मूल्य बताएं। उदाहरण: 'ताजा टमाटर, 1 किलो, 50 रुपए'",
+  kannada: "ಉತ್ಪಾದನೆಯ ಹೆಸರು, ಪ್ರಮಾಣ ಮತ್ತು ಬೆಲೆಯನ್ನು ಹೇಳಿ। ಉದಾಹರಣೆ: 'ತಾಜಾ ಟೊಮೇಟೊ, 1 ಕಿಲೋ, 50 ರೂಪಾಯಿ'",
+  tamil: "தயாரிப்பு பெயர், அளவு மற்றும் விலையைச் சொல்லுங்கள். எடுத்துக்காட்டு: 'புதிய தக்காளி, 1 கிலோ, 50 ரூபாய்'",
+  telugu: "ఉత్పత్తి పేరు, పరిమాణం మరియు ధరను చెప్పండి। ఉదాహరణ: 'తాజా టమాటాలు, 1 కిలో, 50 రూపాయలు'",
+  malayalam: "ഉൽപ്പന്ന നാമം, അളവ്, വിലയെക്കുറിച്ച് പറയുക. ഉദാഹരണം: 'പുതിയ തക്കാളി, 1 കിലോ, 50 രൂപ'"
+};
+
+// Voice button component
+const VoiceButton = ({ isRecording, onStartRecording, onStopRecording, isSupported, language, content }) => {
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    if (isRecording) {
+      setIsAnimating(true);
+    } else {
+      setIsAnimating(false);
+    }
+  }, [isRecording]);
+
+  if (!isSupported) {
+    return (
+      <div className="voice-not-supported">
+        <p>🎙️ Voice input not supported in this browser</p>
+        <p>Please try Chrome, Edge, or Safari</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="voice-button-container">
+      <button 
+        className={`voice-button ${isRecording ? 'recording' : ''} ${isAnimating ? 'pulse' : ''}`}
+        onClick={isRecording ? onStopRecording : onStartRecording}
+        type="button"
+      >
+        {isRecording ? '🔴 Stop Recording' : '🎙️ Start Voice Input'}
+      </button>
+      <div className="voice-prompt">
+        <p>{VOICE_PROMPTS[language] || VOICE_PROMPTS.english}</p>
+      </div>
+    </div>
+  );
+};
+
+// Voice transcript display component
+const VoiceTranscript = ({ transcript, isRecording, content }) => {
+  if (!transcript && !isRecording) return null;
+
+  return (
+    <div className="voice-transcript">
+      <h4>🎙️ {content.voice_input || 'Voice Input'}:</h4>
+      <div className="transcript-content">
+        {transcript || (isRecording ? `${content.listening || 'Listening'}...` : '')}
+      </div>
+      {isRecording && (
+        <div className="voice-animation">
+          <div className="voice-wave"></div>
+          <div className="voice-wave"></div>
+          <div className="voice-wave"></div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 // Language selector component
 const LanguageSelector = ({ currentLanguage, onLanguageChange, languages }) => {
@@ -25,13 +103,167 @@ const LanguageSelector = ({ currentLanguage, onLanguageChange, languages }) => {
 };
 
 // Product input form component
-const ProductInputForm = ({ onSubmit, isLoading, content }) => {
+const ProductInputForm = ({ onSubmit, isLoading, content, currentLanguage, onVoiceInput }) => {
   const [formData, setFormData] = useState({
     name: '',
     quantity: '',
     price: '',
     additional_info: ''
   });
+
+  const [isRecording, setIsRecording] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  const [isVoiceSupported, setIsVoiceSupported] = useState(false);
+  const recognitionRef = useRef(null);
+
+  useEffect(() => {
+    // Check if speech recognition is supported
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    setIsVoiceSupported(!!SpeechRecognition);
+
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = SPEECH_LANGUAGE_CODES[currentLanguage] || 'en-IN';
+
+      recognition.onresult = (event) => {
+        let finalTranscript = '';
+        let interimTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+          } else {
+            interimTranscript += transcript;
+          }
+        }
+
+        const fullTranscript = finalTranscript + interimTranscript;
+        setTranscript(fullTranscript);
+
+        // Parse voice input when final result is received
+        if (finalTranscript) {
+          parseVoiceInput(finalTranscript);
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        setIsRecording(false);
+      };
+
+      recognition.onend = () => {
+        setIsRecording(false);
+      };
+
+      recognitionRef.current = recognition;
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, [currentLanguage]);
+
+  const parseVoiceInput = (voiceText) => {
+    try {
+      // Enhanced parsing logic for Indian language patterns
+      const text = voiceText.toLowerCase();
+      
+      // Price extraction patterns
+      const pricePatterns = [
+        /(\d+)\s*(?:rupees?|रुपए|रूपये|ರೂಪಾಯಿ|ரூபாய்|రూపాయలు|രൂപ)/i,
+        /(?:price|मूल्य|ಬೆಲೆ|விலை|ధర|വില)[:\s]*(\d+)/i,
+        /(\d+)\s*(?:rs|₹)/i
+      ];
+
+      // Quantity extraction patterns
+      const quantityPatterns = [
+        /(\d+(?:\.\d+)?)\s*(?:kg|kilogram|किलो|ಕಿಲೋ|கிலோ|కిలో|കിലോ)/i,
+        /(\d+(?:\.\d+)?)\s*(?:piece|pieces|pcs|पीस|ಪೀಸ್|பீஸ்|పీస్|പീസ്)/i,
+        /(\d+(?:\.\d+)?)\s*(?:liter|litre|लीटर|ಲೀಟರ್|லிட்டர்|లీటర్|ലിറ്റർ)/i,
+        /(?:quantity|मात्रा|ಪ್ರಮಾಣ|அளவு|పరిమాణం|അളവ്)[:\s]*(\d+(?:\.\d+)?)\s*(\w+)/i
+      ];
+
+      let extractedPrice = '';
+      let extractedQuantity = '';
+      let extractedName = voiceText;
+
+      // Extract price
+      for (const pattern of pricePatterns) {
+        const match = text.match(pattern);
+        if (match) {
+          extractedPrice = match[1];
+          break;
+        }
+      }
+
+      // Extract quantity
+      for (const pattern of quantityPatterns) {
+        const match = text.match(pattern);
+        if (match) {
+          if (match[2]) {
+            extractedQuantity = `${match[1]} ${match[2]}`;
+          } else {
+            extractedQuantity = match[0];
+          }
+          break;
+        }
+      }
+
+      // Extract product name (remove price and quantity mentions)
+      let cleanName = voiceText;
+      if (extractedPrice) {
+        cleanName = cleanName.replace(new RegExp(`\\b${extractedPrice}\\s*(?:rupees?|रुपए|रूपये|ರೂಪಾಯಿ|ரூபாய்|రూపాయలు|രൂപ|rs|₹)\\b`, 'gi'), '');
+      }
+      if (extractedQuantity) {
+        cleanName = cleanName.replace(new RegExp(extractedQuantity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '');
+      }
+      cleanName = cleanName.replace(/(?:price|मूल्य|ಬೆಲೆ|விலை|ధర|വില)[:\s]*\d+/gi, '');
+      cleanName = cleanName.replace(/(?:quantity|मात्रा|ಪ್ರಮಾಣ|அளவு|పరిమాణం|അളവ്)[:\s]*[\d\s\w]+/gi, '');
+      cleanName = cleanName.trim();
+
+      // Update form data
+      setFormData(prev => ({
+        ...prev,
+        name: cleanName || prev.name,
+        quantity: extractedQuantity || prev.quantity,
+        price: extractedPrice || prev.price
+      }));
+
+      // Call callback if provided
+      if (onVoiceInput) {
+        onVoiceInput({
+          name: cleanName,
+          quantity: extractedQuantity,
+          price: extractedPrice,
+          fullText: voiceText
+        });
+      }
+
+    } catch (error) {
+      console.error('Error parsing voice input:', error);
+    }
+  };
+
+  const startRecording = () => {
+    if (recognitionRef.current && !isRecording) {
+      setTranscript('');
+      recognitionRef.current.lang = SPEECH_LANGUAGE_CODES[currentLanguage] || 'en-IN';
+      recognitionRef.current.start();
+      setIsRecording(true);
+    }
+  };
+
+  const stopRecording = () => {
+    if (recognitionRef.current && isRecording) {
+      recognitionRef.current.stop();
+      setIsRecording(false);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -48,64 +280,81 @@ const ProductInputForm = ({ onSubmit, isLoading, content }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="product-form">
-      <div className="form-group">
-        <label htmlFor="name">{content.product_name}</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder={content.product_name}
-          required
-        />
-      </div>
+    <div className="product-form-container">
+      <VoiceButton 
+        isRecording={isRecording}
+        onStartRecording={startRecording}
+        onStopRecording={stopRecording}
+        isSupported={isVoiceSupported}
+        language={currentLanguage}
+        content={content}
+      />
+      
+      <VoiceTranscript 
+        transcript={transcript}
+        isRecording={isRecording}
+        content={content}
+      />
 
-      <div className="form-row">
+      <form onSubmit={handleSubmit} className="product-form">
         <div className="form-group">
-          <label htmlFor="quantity">{content.quantity}</label>
+          <label htmlFor="name">{content.product_name}</label>
           <input
             type="text"
-            id="quantity"
-            name="quantity"
-            value={formData.quantity}
+            id="name"
+            name="name"
+            value={formData.name}
             onChange={handleChange}
-            placeholder="1 kg"
+            placeholder={content.product_name}
             required
           />
+        </div>
+
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="quantity">{content.quantity}</label>
+            <input
+              type="text"
+              id="quantity"
+              name="quantity"
+              value={formData.quantity}
+              onChange={handleChange}
+              placeholder="1 kg"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="price">{content.price}</label>
+            <input
+              type="number"
+              id="price"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              placeholder="50"
+              required
+            />
+          </div>
         </div>
 
         <div className="form-group">
-          <label htmlFor="price">{content.price}</label>
-          <input
-            type="number"
-            id="price"
-            name="price"
-            value={formData.price}
+          <label htmlFor="additional_info">{content.additional_info}</label>
+          <textarea
+            id="additional_info"
+            name="additional_info"
+            value={formData.additional_info}
             onChange={handleChange}
-            placeholder="50"
-            required
+            placeholder={content.additional_info}
+            rows="3"
           />
         </div>
-      </div>
 
-      <div className="form-group">
-        <label htmlFor="additional_info">{content.additional_info}</label>
-        <textarea
-          id="additional_info"
-          name="additional_info"
-          value={formData.additional_info}
-          onChange={handleChange}
-          placeholder={content.additional_info}
-          rows="3"
-        />
-      </div>
-
-      <button type="submit" disabled={isLoading} className="submit-btn">
-        {isLoading ? content.processing : content.generate_listing}
-      </button>
-    </form>
+        <button type="submit" disabled={isLoading} className="submit-btn">
+          {isLoading ? content.processing : content.generate_listing}
+        </button>
+      </form>
+    </div>
   );
 };
 
@@ -246,6 +495,11 @@ function App() {
     setError('');
   };
 
+  const handleVoiceInput = (voiceData) => {
+    console.log('Voice input received:', voiceData);
+    // Additional voice input handling can be added here
+  };
+
   const handleProductSubmit = async (formData) => {
     setIsLoading(true);
     setError('');
@@ -291,6 +545,10 @@ function App() {
         <div className="header-content">
           <h1>{languageContent.app_title || 'Digital Catalog Agent'}</h1>
           <p className="subtitle">{languageContent.subtitle || 'Create professional product listings with AI'}</p>
+          <div className="voice-indicator">
+            <span className="voice-icon">🎙️</span>
+            <span className="voice-text">{languageContent.voice_enabled || 'Voice Enabled'}</span>
+          </div>
           
           <LanguageSelector 
             currentLanguage={currentLanguage}
@@ -312,6 +570,8 @@ function App() {
             onSubmit={handleProductSubmit}
             isLoading={isLoading}
             content={languageContent}
+            currentLanguage={currentLanguage}
+            onVoiceInput={handleVoiceInput}
           />
         </div>
 
