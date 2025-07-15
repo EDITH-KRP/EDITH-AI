@@ -77,7 +77,10 @@ LANGUAGE_CONTENT = {
         "no_listings": "No listings found",
         "clear_all": "Clear All",
         "processing": "Processing...",
-        "error_occurred": "An error occurred"
+        "error_occurred": "An error occurred",
+        "voice_enabled": "Voice Enabled",
+        "voice_input": "Voice Input",
+        "listening": "Listening"
     },
     "hindi": {
         "app_title": "डिजिटल कैटलॉग एजेंट",
@@ -96,7 +99,10 @@ LANGUAGE_CONTENT = {
         "no_listings": "कोई लिस्टिंग नहीं मिली",
         "clear_all": "सभी साफ करें",
         "processing": "प्रसंस्करण...",
-        "error_occurred": "एक त्रुटि हुई"
+        "error_occurred": "एक त्रुटि हुई",
+        "voice_enabled": "आवाज सक्षम",
+        "voice_input": "आवाज इनपुट",
+        "listening": "सुन रहा है"
     },
     "kannada": {
         "app_title": "ಡಿಜಿಟಲ್ ಕ್ಯಾಟಲಾಗ್ ಏಜೆಂಟ್",
@@ -115,7 +121,10 @@ LANGUAGE_CONTENT = {
         "no_listings": "ಯಾವುದೇ ಪಟ್ಟಿಗಳು ಕಂಡುಬಂದಿಲ್ಲ",
         "clear_all": "ಎಲ್ಲವನ್ನೂ ಸಾಫ್ ಮಾಡಿ",
         "processing": "ಸಂಸ್ಕರಿಸಲಾಗುತ್ತಿದೆ...",
-        "error_occurred": "ದೋಷ ಸಂಭವಿಸಿದೆ"
+        "error_occurred": "ದೋಷ ಸಂಭವಿಸಿದೆ",
+        "voice_enabled": "ಧ್ವನಿ ಸಕ್ರಿಯಗೊಂಡಿದೆ",
+        "voice_input": "ಧ್ವನಿ ಇನ್‌ಪುಟ್",
+        "listening": "ಕೇಳುತ್ತಿದೆ"
     },
     "tamil": {
         "app_title": "டிஜிட்டல் கேடலாக் ஏஜென்ட்",
@@ -134,7 +143,10 @@ LANGUAGE_CONTENT = {
         "no_listings": "பட்டியல்கள் எதுவும் கிடைக்கவில்லை",
         "clear_all": "அனைத்தையும் அழிக்கவும்",
         "processing": "செயலாக்கம்...",
-        "error_occurred": "ஒரு பிழை நேர்ந்தது"
+        "error_occurred": "ஒரு பிழை நேர்ந்தது",
+        "voice_enabled": "குரல் இயக்கப்பட்டது",
+        "voice_input": "குரல் உள்ளீடு",
+        "listening": "கேட்கிறது"
     },
     "telugu": {
         "app_title": "డిజిటల్ కేటలాగ్ ఏజెంట్",
@@ -153,7 +165,10 @@ LANGUAGE_CONTENT = {
         "no_listings": "జాబితాలు కనుగొనబడలేదు",
         "clear_all": "అన్నీ క్లియర్ చేయండి",
         "processing": "ప్రాసెసింగ్...",
-        "error_occurred": "ఒక లోపం సంభవించింది"
+        "error_occurred": "ఒక లోపం సంభవించింది",
+        "voice_enabled": "వాయిస్ ఎనేబుల్ చేయబడింది",
+        "voice_input": "వాయిస్ ఇన్‌పుట్",
+        "listening": "వింటుంది"
     },
     "malayalam": {
         "app_title": "ഡിജിറ്റൽ കാറ്റലോഗ് ഏജന്റ്",
@@ -172,7 +187,10 @@ LANGUAGE_CONTENT = {
         "no_listings": "ലിസ്റ്റിംഗുകളൊന്നും കണ്ടെത്തിയില്ല",
         "clear_all": "എല്ലാം മായ്ക്കുക",
         "processing": "പ്രോസസ്സിംഗ്...",
-        "error_occurred": "ഒരു പിശക് സംഭവിച്ചു"
+        "error_occurred": "ഒരു പിശക് സംഭവിച്ചു",
+        "voice_enabled": "വോയ്സ് പ്രവർത്തനക്ഷമമാക്കി",
+        "voice_input": "വോയ്സ് ഇൻപുട്ട്",
+        "listening": "കേൾക്കുന്നു"
     }
 }
 
