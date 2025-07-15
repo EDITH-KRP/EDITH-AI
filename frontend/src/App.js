@@ -113,6 +113,7 @@ const LanguageSelector = ({ currentLanguage, onLanguageChange, languages }) => {
 };
 
 // Product input form component
+// Product input form component
 const ProductInputForm = ({ onSubmit, isLoading, content, currentLanguage, onVoiceInput }) => {
   const [formData, setFormData] = useState({
     name: '',
@@ -124,6 +125,7 @@ const ProductInputForm = ({ onSubmit, isLoading, content, currentLanguage, onVoi
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [isVoiceSupported, setIsVoiceSupported] = useState(false);
+  const [voiceError, setVoiceError] = useState('');
   const recognitionRef = useRef(null);
 
   useEffect(() => {
@@ -161,6 +163,7 @@ const ProductInputForm = ({ onSubmit, isLoading, content, currentLanguage, onVoi
 
       recognition.onerror = (event) => {
         console.error('Speech recognition error:', event.error);
+        setVoiceError(`Voice recognition error: ${event.error}`);
         setIsRecording(false);
       };
 
@@ -185,7 +188,7 @@ const ProductInputForm = ({ onSubmit, isLoading, content, currentLanguage, onVoi
       
       // Price extraction patterns
       const pricePatterns = [
-        /(\d+)\s*(?:rupees?|रुपए|रूपये|ರೂಪಾಯಿ|ரூபாய்|రూపాయలు|രൂപ)/i,
+        /(\d+)\s*(?:rupees?|रुपए|रूपये|ರೂಪಾಯಿ|ரூபாய்|రూபாயలు|രൂപ)/i,
         /(?:price|मूल्य|ಬೆಲೆ|விலை|ధర|വില)[:\s]*(\d+)/i,
         /(\d+)\s*(?:rs|₹)/i
       ];
@@ -227,7 +230,7 @@ const ProductInputForm = ({ onSubmit, isLoading, content, currentLanguage, onVoi
       // Extract product name (remove price and quantity mentions)
       let cleanName = voiceText;
       if (extractedPrice) {
-        cleanName = cleanName.replace(new RegExp(`\\b${extractedPrice}\\s*(?:rupees?|रुपए|रूपये|ರೂಪಾಯಿ|ரூபாய்|రూపాయలు|രൂപ|rs|₹)\\b`, 'gi'), '');
+        cleanName = cleanName.replace(new RegExp(`\\b${extractedPrice}\\s*(?:rupees?|रुपए|रूपये|ರೂಪಾಯಿ|ரூபாய்|రూபாயలు|രൂപ|rs|₹)\\b`, 'gi'), '');
       }
       if (extractedQuantity) {
         cleanName = cleanName.replace(new RegExp(extractedQuantity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '');
@@ -256,12 +259,14 @@ const ProductInputForm = ({ onSubmit, isLoading, content, currentLanguage, onVoi
 
     } catch (error) {
       console.error('Error parsing voice input:', error);
+      setVoiceError('Error parsing voice input');
     }
   };
 
   const startRecording = () => {
     if (recognitionRef.current && !isRecording) {
       setTranscript('');
+      setVoiceError('');
       recognitionRef.current.lang = SPEECH_LANGUAGE_CODES[currentLanguage] || 'en-IN';
       recognitionRef.current.start();
       setIsRecording(true);
@@ -273,6 +278,22 @@ const ProductInputForm = ({ onSubmit, isLoading, content, currentLanguage, onVoi
       recognitionRef.current.stop();
       setIsRecording(false);
     }
+  };
+
+  const testVoiceDemo = () => {
+    // Demo voice inputs for different languages
+    const demoInputs = {
+      english: "Fresh tomatoes 1 kg 50 rupees",
+      hindi: "टमाटर 1 किलो 50 रुपए",
+      kannada: "ಟೊಮೇಟೊ 1 ಕಿಲೋ 50 ರೂಪಾಯಿ",
+      tamil: "தக்காளி 1 கிலோ 50 ரூபாய்",
+      telugu: "టమాటాలు 1 కిలో 50 రూపాయలు",
+      malayalam: "തക്കാളി 1 കിലോ 50 രൂപ"
+    };
+
+    const demoText = demoInputs[currentLanguage] || demoInputs.english;
+    setTranscript(demoText);
+    parseVoiceInput(demoText);
   };
 
   const handleSubmit = (e) => {
@@ -298,7 +319,15 @@ const ProductInputForm = ({ onSubmit, isLoading, content, currentLanguage, onVoi
         isSupported={isVoiceSupported}
         language={currentLanguage}
         content={content}
+        onTestVoice={testVoiceDemo}
       />
+      
+      {voiceError && (
+        <div className="voice-error">
+          <p>❌ {voiceError}</p>
+          <p>💡 Make sure to allow microphone access when prompted</p>
+        </div>
+      )}
       
       <VoiceTranscript 
         transcript={transcript}
