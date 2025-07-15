@@ -26,7 +26,7 @@ const VOICE_PROMPTS = {
 };
 
 // Voice button component
-const VoiceButton = ({ isRecording, onStartRecording, onStopRecording, isSupported, language, content }) => {
+const VoiceButton = ({ isRecording, onStartRecording, onStopRecording, isSupported, language, content, onTestVoice }) => {
   const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
@@ -55,8 +55,18 @@ const VoiceButton = ({ isRecording, onStartRecording, onStopRecording, isSupport
       >
         {isRecording ? '🔴 Stop Recording' : '🎙️ Start Voice Input'}
       </button>
+      
+      <button 
+        className="voice-demo-button"
+        onClick={onTestVoice}
+        type="button"
+      >
+        🧪 Test Voice Demo
+      </button>
+      
       <div className="voice-prompt">
         <p>{VOICE_PROMPTS[language] || VOICE_PROMPTS.english}</p>
+        <p className="voice-tip">💡 Click "Test Voice Demo" to see how it works!</p>
       </div>
     </div>
   );
