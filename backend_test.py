@@ -209,16 +209,95 @@ class VoiceCatalogAPITester:
     def test_voice_commands_comprehensive(self):
         """Test various voice commands"""
         commands = [
-            ("Add 5 kg tomato at ₹50", "add"),
-            ("Update tomato price to ₹60", "update_price"),
-            ("Remove 2 kg tomato", "remove"),
-            ("List all products", "list"),
-            ("Delete tomato", "delete")
+            ("Add 5 kg tomato at ₹50", "en", "add"),
+            ("Update tomato price to ₹60", "en", "update_price"),
+            ("Remove 2 kg tomato", "en", "remove"),
+            ("List all products", "en", "list"),
+            ("Delete tomato", "en", "delete")
         ]
         
         all_passed = True
-        for command, expected_action in commands:
-            if not self.test_voice_command(command, expected_action):
+        for command, language, expected_action in commands:
+            if not self.test_voice_command(command, language, expected_action):
+                all_passed = False
+                
+        return all_passed
+
+    def test_multilanguage_voice_commands(self):
+        """Test voice commands in different languages"""
+        print(f"\n🌍 Testing Multi-Language Voice Commands...")
+        
+        # Test commands in different languages
+        multilang_commands = [
+            # English
+            ("Add 5 kg tomato at ₹50", "en"),
+            ("Add 3 kg onion at ₹30", "en"),
+            
+            # Hindi
+            ("5 किलो टमाटर 50 रुपये जोड़ो", "hi"),
+            ("3 किलो प्याज 30 रुपये जोड़ो", "hi"),
+            ("टमाटर कीमत 60 रुपये अपडेट करो", "hi"),
+            
+            # Kannada
+            ("5 ಕಿಲೋ ಟೊಮೇಟೊ 50 ರೂಪಾಯಿ ಸೇರಿಸಿ", "kn"),
+            ("3 ಕಿಲೋ ಈರುಳ್ಳಿ 30 ರೂಪಾಯಿ ಸೇರಿಸಿ", "kn"),
+            
+            # Tamil
+            ("5 கிலோ தக்காளி 50 ரூபாய் சேர்", "ta"),
+            ("3 கிலோ வெங்காயம் 30 ரூபாய் சேர்", "ta"),
+            
+            # Telugu
+            ("5 కిలో టమాట 50 రూపాయలు చేర్చు", "te"),
+            ("3 కிలో ఉల్లిపాయ 30 రూపాయలు చేర్చు", "te"),
+        ]
+        
+        all_passed = True
+        for command, language in multilang_commands:
+            if not self.test_voice_command(command, language):
+                all_passed = False
+                
+        return all_passed
+
+    def test_translation_functionality(self):
+        """Test regional language translation to English"""
+        print(f"\n🔤 Testing Translation Functionality...")
+        
+        # Test translation by comparing similar commands in different languages
+        translation_tests = [
+            # Hindi to English equivalents
+            ("5 किलो टमाटर 50 रुपये जोड़ो", "hi", "Add 5 kg tomato at ₹50", "en"),
+            ("प्याज कीमत 40 रुपये अपडेट करो", "hi", "Update onion price to ₹40", "en"),
+            
+            # Kannada to English equivalents  
+            ("5 ಕಿಲೋ ಟೊಮೇಟೊ 50 ರೂಪಾಯಿ ಸೇರಿಸಿ", "kn", "Add 5 kg tomato at ₹50", "en"),
+            
+            # Tamil to English equivalents
+            ("5 கிலோ தக்காளி 50 ரூபாய் சேர்", "ta", "Add 5 kg tomato at ₹50", "en"),
+            
+            # Telugu to English equivalents
+            ("5 కిలో టమాట 50 రూపాయలు చేర్చు", "te", "Add 5 kg tomato at ₹50", "en"),
+        ]
+        
+        all_passed = True
+        for regional_cmd, regional_lang, english_cmd, english_lang in translation_tests:
+            print(f"\n   Testing translation: {regional_lang.upper()} -> {english_lang.upper()}")
+            print(f"   Regional: {regional_cmd}")
+            print(f"   English:  {english_cmd}")
+            
+            # Test regional command
+            success1, response1 = self.test_voice_command(regional_cmd, regional_lang)
+            
+            # Clean up any created products before testing English equivalent
+            if success1 and 'product' in response1:
+                self.test_delete_product(response1['product'])
+            
+            # Test English equivalent
+            success2, response2 = self.test_voice_command(english_cmd, english_lang)
+            
+            if success1 and success2:
+                print(f"   ✅ Both commands processed successfully")
+            else:
+                print(f"   ❌ Translation test failed")
                 all_passed = False
                 
         return all_passed
