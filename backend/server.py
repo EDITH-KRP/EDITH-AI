@@ -185,46 +185,65 @@ def parse_voice_command(command: str, language: str = "en"):
     translated_command = translate_regional_to_english(command, language)
     command_lower = translated_command.lower().strip()
     
-    # Add product patterns
+    # Enhanced pattern matching for better regional language support
+    # Add product patterns - more flexible
     add_patterns = [
-        r"add (\d+(?:\.\d+)?)\s*kg\s+(.+?)\s+(?:at\s+)?₹?(\d+(?:\.\d+)?)",
-        r"add (\d+(?:\.\d+)?)\s*kg\s+(.+?)\s+(\d+(?:\.\d+)?)\s*rupees?",
-        r"add (\d+(?:\.\d+)?)\s*(?:kg\s+)?(.+?)\s+(?:at\s+)?₹?(\d+(?:\.\d+)?)",
-        r"(\d+(?:\.\d+)?)\s*kg\s+(.+?)\s+(?:at\s+)?₹?(\d+(?:\.\d+)?)\s*add",
-        r"(\d+(?:\.\d+)?)\s*kg\s+(.+?)\s+(\d+(?:\.\d+)?)\s*rupees?\s*add"
+        r"add\s+(\d+(?:\.\d+)?)\s*kg\s+(.+?)\s+(?:at\s+)?₹?(\d+(?:\.\d+)?)",
+        r"add\s+(\d+(?:\.\d+)?)\s*kg\s+(.+?)\s+(\d+(?:\.\d+)?)\s*rupees?",
+        r"add\s+(\d+(?:\.\d+)?)\s*(?:kg\s+)?(.+?)\s+(?:at\s+)?₹?(\d+(?:\.\d+)?)",
+        r"(\d+(?:\.\d+)?)\s*kg\s+(.+?)\s+(?:at\s+)?₹?(\d+(?:\.\d+)?)",
+        r"(\d+(?:\.\d+)?)\s*kg\s+(.+?)\s+(\d+(?:\.\d+)?)\s*rupees?",
+        r"(\d+(?:\.\d+)?)\s+(.+?)\s+(\d+(?:\.\d+)?)\s*rupees?",
+        r"(\d+(?:\.\d+)?)\s+(.+?)\s+₹?(\d+(?:\.\d+)?)"
     ]
     
     for pattern in add_patterns:
         match = re.search(pattern, command_lower)
         if match:
-            quantity = float(match.group(1))
-            product_name = match.group(2).strip()
-            price = float(match.group(3))
-            return {
-                "action": "add",
-                "product": product_name,
-                "quantity": quantity,
-                "price": price
-            }
+            try:
+                quantity = float(match.group(1))
+                product_name = match.group(2).strip()
+                price = float(match.group(3))
+                
+                # Clean product name
+                product_name = re.sub(r'\b(?:add|at|rupees?|kg)\b', '', product_name).strip()
+                
+                return {
+                    "action": "add",
+                    "product": product_name,
+                    "quantity": quantity,
+                    "price": price
+                }
+            except (ValueError, IndexError):
+                continue
     
-    # Update price patterns
+    # Update price patterns - enhanced
     update_price_patterns = [
         r"update\s+(.+?)\s+price\s+to\s+₹?(\d+(?:\.\d+)?)",
         r"change\s+(.+?)\s+price\s+to\s+₹?(\d+(?:\.\d+)?)",
-        r"(.+?)\s+price\s+₹?(\d+(?:\.\d+)?)\s*update",
-        r"(.+?)\s+rate\s+₹?(\d+(?:\.\d+)?)\s*update"
+        r"(.+?)\s+price\s+₹?(\d+(?:\.\d+)?)",
+        r"(.+?)\s+rate\s+₹?(\d+(?:\.\d+)?)",
+        r"(.+?)\s+₹?(\d+(?:\.\d+)?)\s*rupees?\s+update",
+        r"(.+?)\s+₹?(\d+(?:\.\d+)?)\s*update"
     ]
     
     for pattern in update_price_patterns:
         match = re.search(pattern, command_lower)
         if match:
-            product_name = match.group(1).strip()
-            price = float(match.group(2))
-            return {
-                "action": "update_price",
-                "product": product_name,
-                "price": price
-            }
+            try:
+                product_name = match.group(1).strip()
+                price = float(match.group(2))
+                
+                # Clean product name
+                product_name = re.sub(r'\b(?:update|change|price|rate|rupees?)\b', '', product_name).strip()
+                
+                return {
+                    "action": "update_price",
+                    "product": product_name,
+                    "price": price
+                }
+            except (ValueError, IndexError):
+                continue
     
     # Remove quantity patterns
     remove_patterns = [
@@ -236,13 +255,16 @@ def parse_voice_command(command: str, language: str = "en"):
     for pattern in remove_patterns:
         match = re.search(pattern, command_lower)
         if match:
-            quantity = float(match.group(1))
-            product_name = match.group(2).strip()
-            return {
-                "action": "remove",
-                "product": product_name,
-                "quantity": quantity
-            }
+            try:
+                quantity = float(match.group(1))
+                product_name = match.group(2).strip()
+                return {
+                    "action": "remove",
+                    "product": product_name,
+                    "quantity": quantity
+                }
+            except (ValueError, IndexError):
+                continue
     
     # Delete product patterns
     delete_patterns = [
@@ -264,7 +286,12 @@ def parse_voice_command(command: str, language: str = "en"):
     if re.search(r"list\s+(?:all\s+)?products?", command_lower):
         return {"action": "list"}
     
-    return {"action": "unknown", "command": command, "translated": translated_command}
+    return {
+        "action": "unknown", 
+        "command": command, 
+        "translated": translated_command,
+        "language": language
+    }
 
 def format_product_response(product: dict, language: str = "en"):
     """Format product response with breakdown and language support"""
