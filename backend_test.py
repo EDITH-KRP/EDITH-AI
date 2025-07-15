@@ -179,15 +179,15 @@ class VoiceCatalogAPITester:
             
         return success
 
-    def test_voice_command(self, command, expected_action):
+    def test_voice_command(self, command, language="en", expected_action=None):
         """Test voice command processing"""
         command_data = {
             "command": command,
-            "language": "en"
+            "language": language
         }
         
         success, response = self.run_test(
-            f"Voice Command - {command}",
+            f"Voice Command ({language.upper()}) - {command[:30]}...",
             "POST",
             "api/voice-command",
             200,
@@ -199,6 +199,10 @@ class VoiceCatalogAPITester:
             if 'error' in response:
                 print(f"⚠️  Command returned error: {response['error']}")
                 return False
+            
+            # Check if response has expected language
+            if response.get('language') != language:
+                print(f"⚠️  Response language mismatch: expected {language}, got {response.get('language')}")
                 
         return success
 
