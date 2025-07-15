@@ -163,6 +163,7 @@ def translate_regional_to_english(text: str, language: str) -> str:
     for regional_word, english_word in translation_dict.items():
         translated_text = translated_text.replace(regional_word, english_word)
     
+    print(f"Translation: {text} ({language}) -> {translated_text}")
     return translated_text
 
 def calculate_price_breakdown(price_per_kg: float):
